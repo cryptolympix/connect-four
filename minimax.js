@@ -43,7 +43,7 @@ function minimax(board, depth, isMaximizingPlayer) {
   if (result) {
     if (result === 'none') return 0;
     if (result === players.HUMAN) return -10;
-    if (result === players.AI) return 10;
+    if (result === players.AI) return 100;
   }
 
   if (isMaximizingPlayer) {

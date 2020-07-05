@@ -1,3 +1,3 @@
-# Four Connect
+# Connect Four
 
-Try to beat the artificial intelligence in the famous game of four connect.
+Try to beat the artificial intelligence in the famous game of connect four. The artificial intelligence has been created with the [minimax algorithm](https://fr.wikipedia.org/wiki/Algorithme_minimax).
