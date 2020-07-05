@@ -29,6 +29,7 @@ function reset() {
 function draw() {
   background(255);
   drawBoard();
+  drawPieces();
 
   let result = checkWinner();
   if (result) {
@@ -52,27 +53,39 @@ function drawBoard() {
   let w = CW / boardCol;
   let h = CH / boardRow;
 
-  stroke(0);
-  strokeWeight(2);
+  fill('#4169E1');
+  rect(0, 0, CW, CH);
 
-  // Draw the lines
-  for (let i = 0; i <= boardCol; i++) {
-    line(i * w, 0, i * w, CH);
+  for (let i = 0; i < boardCol; i++) {
+    for (let j = 0; j < boardRow; j++) {
+      let centerX = i * w + w / 2;
+      let centerY = j * h + h / 2;
+      let dw = w - 20;
+      let dh = h - 20;
+      fill(255);
+      circle(centerX, centerY, dw, dh);
+    }
   }
-  line(0, CH, CW, CH);
+}
+
+function drawPieces() {
+  let w = CW / boardCol;
+  let h = CH / boardRow;
 
   // Draw the pieces
   for (let i = 0; i < boardCol; i++) {
     for (let j = 0; j < boardRow; j++) {
       let centerX = i * w + w / 2;
       let centerY = CH - j * h - h / 2;
+      let dw = w - 20;
+      let dh = h - 20;
       if (board[i][j] === players.HUMAN) {
         fill('red');
-        ellipse(centerX, centerY, w, h);
+        ellipse(centerX, centerY, dw, dh);
       }
       if (board[i][j] === players.AI) {
         fill('orange');
-        ellipse(centerX, centerY, w, h);
+        ellipse(centerX, centerY, dw, dh);
       }
     }
   }
