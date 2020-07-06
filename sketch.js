@@ -17,7 +17,7 @@ let board = [];
 let boardRow = 6;
 let boardCol = 7;
 
-let players = { HUMAN: 'red', AI: 'orange' };
+let players = { HUMAN: 'human', AI: 'ai' };
 let currentPlayer;
 let end = false;
 
