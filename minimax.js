@@ -1,4 +1,4 @@
-let MAX_DEPTH = 5;
+let MAX_DEPTH = 8;
 
 function getBestMove() {
   let bestScore = -Infinity;
@@ -14,7 +14,7 @@ function getBestMove() {
     // If the column if not full
     if (board[i][boardRow - 1] === -Infinity) {
       pushPiece(i, players.AI);
-      let score = minimax(board, 0, false);
+      let score = minimax(board, MAX_DEPTH, -Infinity, Infinity, false);
       removePiece(i);
       if (score > bestScore) {
         bestMoves = [];
@@ -34,8 +34,8 @@ function getBestMove() {
   }
 }
 
-function minimax(board, depth, isMaximizingPlayer) {
-  if (depth > MAX_DEPTH) {
+function minimax(board, depth, alpha, beta, isMaximizingPlayer) {
+  if (depth == 0) {
     return 0;
   }
 
@@ -52,9 +52,11 @@ function minimax(board, depth, isMaximizingPlayer) {
       // If the column if not full
       if (board[i][boardRow - 1] === -Infinity) {
         pushPiece(i, players.AI);
-        let score = minimax(board, depth + 1, false);
+        let score = minimax(board, depth - 1, alpha, beta, false);
         removePiece(i);
         bestScore = max(score, bestScore);
+        alpha = max(alpha, score);
+        if (beta <= alpha) break;
       }
     }
     return bestScore;
@@ -64,9 +66,11 @@ function minimax(board, depth, isMaximizingPlayer) {
       // If the column if not full
       if (board[i][boardRow - 1] === -Infinity) {
         pushPiece(i, players.HUMAN);
-        let score = minimax(board, depth + 1, true);
+        let score = minimax(board, depth - 1, alpha, beta, true);
         removePiece(i);
         bestScore = min(score, bestScore);
+        beta = min(beta, score);
+        if (beta <= alpha) break;
       }
     }
     return bestScore;

@@ -1,6 +1,6 @@
 # Connect Four
 
-Try to beat the artificial intelligence in the famous game of connect four. This artificial intelligence has been created with the [minimax algorithm](https://fr.wikipedia.org/wiki/Algorithme_minimax).
+Try to beat the artificial intelligence in the famous game of connect four. This artificial intelligence has been created with the [alpha beta pruning algorithm](https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning).
 
 ![screenshot of the game](./screenshot.png)
 
