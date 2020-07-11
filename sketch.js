@@ -1,17 +1,17 @@
+// Canvas dimensions
 let CW = 600;
-let CH = 650;
-let BOARD_W = 600;
-let BOARD_H = 550;
+let CH = 550;
 
 // Dimensions for the mobiles
-if (window.innerWidth < 600) {
+if (window.innerWidth < 767) {
   CW = (5 * window.innerWidth) / 6;
-  CH = CW + CW / 6;
-  BOARD_W = CW;
-  BOARD_H = CW - CW / 12;
+  CH = CW - CW / 12;
 }
 
-let TEXT_SIZE = 20;
+// Information above the board
+let gameMessageView;
+let gameMessage;
+let gameMessageColor;
 
 let board = [];
 let boardRow = 6;
@@ -22,14 +22,15 @@ let currentPlayer;
 let end = false;
 
 function setup() {
+  gameMessageView = createP();
   createCanvas(CW, CH);
   reset();
 }
 
 function reset() {
-  board = new Array(boardCol).fill(-Infinity);
+  board = new Array(boardCol).fill(null);
   for (let i = 0; i < board.length; i++) {
-    board[i] = new Array(boardRow).fill(-Infinity);
+    board[i] = new Array(boardRow).fill(null);
   }
   end = false;
   currentPlayer = players.HUMAN;
@@ -37,81 +38,77 @@ function reset() {
 
 function draw() {
   background(255);
-  drawBoard(0, CH - BOARD_H);
-  if (end) drawResult();
-  else drawMessage();
+  drawBoard();
+  drawPieces();
+  drawGameInfo();
 }
 
-function drawMessage() {
-  noStroke();
-  textFont('Nunito');
-  textSize(TEXT_SIZE);
-  textAlign(CENTER);
-  textStyle(ITALIC);
-  if (currentPlayer === players.AI) {
-    fill('lightgrey');
-    text('AI is thinking...', CW / 2, (CH - BOARD_H) / 2 + TEXT_SIZE / 2);
+function drawGameInfo() {
+  if (!end) {
+    if (currentPlayer === players.AI) {
+      gameMessageColor = 'lightgrey';
+      gameMessage = 'AI is searching a move...';
+    } else {
+      gameMessageColor = '#4169E1';
+      gameMessage = "It's your turn :)";
+    }
   } else {
-    fill('#4169E1');
-    text("It's your turn :)", CW / 2, (CH - BOARD_H) / 2 + TEXT_SIZE / 2);
-  }
-}
-
-function drawResult() {
-  noStroke();
-  textFont('Nunito');
-  textSize(TEXT_SIZE);
-  textAlign(CENTER);
-  textStyle(ITALIC);
-  let result = checkWinner();
-  if (result) {
-    if (result === 'none') {
-      fill('#4169E1');
-      text('No winner', CW / 2, (CH - BOARD_H) / 2 + TEXT_SIZE / 2);
-    }
-    if (result === players.AI) {
-      fill('red');
-      text('AI has been better than you...', CW / 2, (CH - BOARD_H) / 2 + TEXT_SIZE / 2);
-    }
-    if (result === players.HUMAN) {
-      fill('green');
-      text('Well played !', CW / 2, (CH - BOARD_H) / 2 + TEXT_SIZE / 2);
+    let result = checkWinner();
+    if (result) {
+      if (result === 'none') {
+        gameMessageColor = '#4169E1';
+        gameMessage = 'No winner';
+      }
+      if (result === players.AI) {
+        gameMessageColor = 'red';
+        gameMessage = 'AI has been better than you...';
+      }
+      if (result === players.HUMAN) {
+        gameMessageColor = 'green';
+        gameMessage = 'Well played !';
+      }
     }
   }
+
+  gameMessageView.html(gameMessage);
+  gameMessageView.size(CW, 20);
+  gameMessageView.style('color', gameMessageColor);
+  gameMessageView.style('text-align', 'center');
+  gameMessageView.style('font-family', 'Nunito');
+  gameMessageView.style('font-size', '20px');
+  gameMessageView.style('font-style', 'italic');
 }
 
-function drawBoard(x, y) {
-  let w = BOARD_W / boardCol;
-  let h = BOARD_H / boardRow;
+function drawBoard() {
+  let w = CW / boardCol;
+  let h = CH / boardRow;
 
   stroke(0);
   strokeWeight(1);
   fill('#4169E1');
-  rect(x, y, BOARD_W, BOARD_H);
+  rect(0, 0, CW, CH);
 
   for (let i = 0; i < boardCol; i++) {
     for (let j = 0; j < boardRow; j++) {
-      let centerX = x + i * w + w / 2;
-      let centerY = y + j * h + h / 2;
+      let centerX = i * w + w / 2;
+      let centerY = j * h + h / 2;
       let dw = w - w / 6;
       let dh = h - h / 6;
       fill(255);
       ellipse(centerX, centerY, dw, dh);
     }
   }
-
-  drawPieces(x, y);
 }
 
-function drawPieces(x, y) {
-  let w = BOARD_W / boardCol;
-  let h = BOARD_H / boardRow;
+function drawPieces() {
+  let w = CW / boardCol;
+  let h = CH / boardRow;
 
   // Draw the pieces
   for (let i = 0; i < boardCol; i++) {
     for (let j = 0; j < boardRow; j++) {
-      let centerX = x + i * w + w / 2;
-      let centerY = y + BOARD_H - j * h - h / 2;
+      let centerX = i * w + w / 2;
+      let centerY = CH - j * h - h / 2;
       let dw = w - w / 6;
       let dh = h - h / 6;
       if (board[i][j] === players.HUMAN) {
@@ -130,12 +127,12 @@ function mouseReleased() {
   let w = CW / boardCol;
 
   // Ignore all the mouse event outside of the board
-  if (mouseX < 0 || mouseX > CW || mouseY < CH - BOARD_H || mouseY > CH) return;
+  if (mouseX < 0 || mouseX > CW || mouseY < 0 || mouseY > CH) return;
 
   if (!end && currentPlayer === players.HUMAN) {
     let col = floor(mouseX / w);
     // If the column is not full
-    if (board[col][boardRow - 1] === -Infinity) {
+    if (!board[col][boardRow - 1]) {
       pushPiece(col, players.HUMAN);
       currentPlayer = players.AI;
       let result = checkWinner();
@@ -171,7 +168,7 @@ function AI() {
 function pushPiece(col, player) {
   let j = 0;
   // Find the j index to place the piece vertically
-  while (board[col][j] !== -Infinity && j < boardRow) {
+  while (board[col][j] && j < boardRow) {
     j++;
   }
   if (j < boardRow) {
@@ -182,18 +179,18 @@ function pushPiece(col, player) {
 function removePiece(col) {
   let j = boardRow - 1;
   // Find the j index to place the piece vertically
-  while (board[col][j] === -Infinity && j >= 0) {
+  while (!board[col][j] && j >= 0) {
     j--;
   }
   if (j > -1) {
-    board[col][j] = -Infinity;
+    board[col][j] = null;
   }
 }
 
 function isFullBoard() {
   for (let i = 0; i < boardCol; i++) {
     for (let j = 0; j < boardRow; j++) {
-      if (board[i][j] === -Infinity) return false;
+      if (!board[i][j]) return false;
     }
   }
   return true;
@@ -202,14 +199,14 @@ function isFullBoard() {
 function isEmptyBoard() {
   for (let i = 0; i < boardCol; i++) {
     for (let j = 0; j < boardRow; j++) {
-      if (board[i][j] !== -Infinity) return false;
+      if (board[i][j]) return false;
     }
   }
   return true;
 }
 
 function equals(a, b, c, d) {
-  return a !== -Infinity && a === b && b === c && c === d;
+  return a !== null && a === b && b === c && c === d;
 }
 
 function checkWinner() {
