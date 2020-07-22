@@ -12,7 +12,7 @@ function getBestMove() {
 
   for (let i = 0; i < boardCol; i++) {
     // If the column if not full
-    if (!board[i][boardRow - 1]) {
+    if (!board[i][0]) {
       pushPiece(i, players.AI);
       let score = minimax(board, MAX_DEPTH, -Infinity, Infinity, false);
       removePiece(i);
@@ -50,7 +50,7 @@ function minimax(board, depth, alpha, beta, isMaximizingPlayer) {
     let bestScore = -Infinity;
     for (let i = 0; i < boardCol; i++) {
       // If the column if not full
-      if (!board[i][boardRow - 1]) {
+      if (!board[i][0]) {
         pushPiece(i, players.AI);
         let score = minimax(board, depth - 1, alpha, beta, false);
         removePiece(i);
@@ -64,7 +64,7 @@ function minimax(board, depth, alpha, beta, isMaximizingPlayer) {
     let bestScore = Infinity;
     for (let i = 0; i < boardCol; i++) {
       // If the column if not full
-      if (!board[i][boardRow - 1]) {
+      if (!board[i][0]) {
         pushPiece(i, players.HUMAN);
         let score = minimax(board, depth - 1, alpha, beta, true);
         removePiece(i);
