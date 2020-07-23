@@ -1,26 +1,26 @@
-let MAX_DEPTH = 8;
+let MAX_DEPTH = 7; // The AI anticipates the plays up to 8 laps in advance.
 
-function getBestMove() {
+function getBestMove(depth = MAX_DEPTH) {
   let bestScore = -Infinity;
   let bestMoves = []; // best moves found
 
   // If the board is empty, choose a random column
   if (isEmptyBoard()) {
-    let col = round(random() * boardCol);
+    let col = round(random() * BOARD_NUM_COL);
     return { col };
   }
 
-  for (let i = 0; i < boardCol; i++) {
+  for (let i = 0; i < BOARD_NUM_COL; i++) {
     // If the column if not full
-    if (!board[i][boardRow - 1]) {
+    if (!board[i][BOARD_NUM_ROW - 1]) {
       pushPiece(i, players.AI);
-      let score = minimax(board, MAX_DEPTH, -Infinity, Infinity, false);
+      let score = alphabeta(board, depth, -Infinity, Infinity, false);
       removePiece(i);
       if (score > bestScore) {
         bestMoves = [];
         bestScore = score;
       }
-      if (score === bestScore) {
+      if (score == bestScore) {
         bestMoves.push({ col: i });
       }
     }
@@ -34,11 +34,7 @@ function getBestMove() {
   }
 }
 
-function minimax(board, depth, alpha, beta, isMaximizingPlayer) {
-  if (depth == 0) {
-    return 0;
-  }
-
+function alphabeta(board, depth, alpha, beta, isMaximizingPlayer) {
   let result = checkWinner();
   if (result) {
     if (result === 'none') return 0;
@@ -46,13 +42,15 @@ function minimax(board, depth, alpha, beta, isMaximizingPlayer) {
     if (result === players.AI) return 10;
   }
 
+  if (depth == 0) return 0;
+
   if (isMaximizingPlayer) {
     let bestScore = -Infinity;
-    for (let i = 0; i < boardCol; i++) {
+    for (let i = 0; i < BOARD_NUM_COL; i++) {
       // If the column if not full
-      if (!board[i][boardRow - 1]) {
+      if (!board[i][BOARD_NUM_ROW - 1]) {
         pushPiece(i, players.AI);
-        let score = minimax(board, depth - 1, alpha, beta, false);
+        let score = alphabeta(board, depth - 1, alpha, beta, false);
         removePiece(i);
         bestScore = max(score, bestScore);
         alpha = max(alpha, score);
@@ -62,11 +60,11 @@ function minimax(board, depth, alpha, beta, isMaximizingPlayer) {
     return bestScore;
   } else {
     let bestScore = Infinity;
-    for (let i = 0; i < boardCol; i++) {
+    for (let i = 0; i < BOARD_NUM_COL; i++) {
       // If the column if not full
-      if (!board[i][boardRow - 1]) {
+      if (!board[i][BOARD_NUM_ROW - 1]) {
         pushPiece(i, players.HUMAN);
-        let score = minimax(board, depth - 1, alpha, beta, true);
+        let score = alphabeta(board, depth - 1, alpha, beta, true);
         removePiece(i);
         bestScore = min(score, bestScore);
         beta = min(beta, score);

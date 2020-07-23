@@ -14,8 +14,8 @@ let gameMessage;
 let gameMessageColor;
 
 let board = [];
-let boardRow = 6;
-let boardCol = 7;
+let BOARD_NUM_ROW = 6;
+let BOARD_NUM_COL = 7;
 
 let players = { HUMAN: 'human', AI: 'ai' };
 let currentPlayer;
@@ -28,9 +28,9 @@ function setup() {
 }
 
 function reset() {
-  board = new Array(boardCol).fill(null);
+  board = new Array(BOARD_NUM_COL).fill(null);
   for (let i = 0; i < board.length; i++) {
-    board[i] = new Array(boardRow).fill(null);
+    board[i] = new Array(BOARD_NUM_ROW).fill(null);
   }
   end = false;
   currentPlayer = players.HUMAN;
@@ -80,16 +80,16 @@ function drawGameInfo() {
 }
 
 function drawBoard() {
-  let w = CW / boardCol;
-  let h = CH / boardRow;
+  let w = CW / BOARD_NUM_COL;
+  let h = CH / BOARD_NUM_ROW;
 
   stroke(0);
   strokeWeight(1);
   fill('#4169E1');
   rect(0, 0, CW, CH);
 
-  for (let i = 0; i < boardCol; i++) {
-    for (let j = 0; j < boardRow; j++) {
+  for (let i = 0; i < BOARD_NUM_COL; i++) {
+    for (let j = 0; j < BOARD_NUM_ROW; j++) {
       let centerX = i * w + w / 2;
       let centerY = j * h + h / 2;
       let dw = w - w / 6;
@@ -101,12 +101,12 @@ function drawBoard() {
 }
 
 function drawPieces() {
-  let w = CW / boardCol;
-  let h = CH / boardRow;
+  let w = CW / BOARD_NUM_COL;
+  let h = CH / BOARD_NUM_ROW;
 
   // Draw the pieces
-  for (let i = 0; i < boardCol; i++) {
-    for (let j = 0; j < boardRow; j++) {
+  for (let i = 0; i < BOARD_NUM_COL; i++) {
+    for (let j = 0; j < BOARD_NUM_ROW; j++) {
       let centerX = i * w + w / 2;
       let centerY = CH - j * h - h / 2;
       let dw = w - w / 6;
@@ -124,7 +124,7 @@ function drawPieces() {
 }
 
 function mouseReleased() {
-  let w = CW / boardCol;
+  let w = CW / BOARD_NUM_COL;
 
   // Ignore all the mouse event outside of the board
   if (mouseX < 0 || mouseX > CW || mouseY < 0 || mouseY > CH) return;
@@ -132,7 +132,7 @@ function mouseReleased() {
   if (!end && currentPlayer === players.HUMAN) {
     let col = floor(mouseX / w);
     // If the column is not full
-    if (!board[col][boardRow - 1]) {
+    if (!board[col][BOARD_NUM_ROW - 1]) {
       pushPiece(col, players.HUMAN);
       currentPlayer = players.AI;
       let result = checkWinner();
@@ -168,16 +168,16 @@ function AI() {
 function pushPiece(col, player) {
   let j = 0;
   // Find the j index to place the piece vertically
-  while (board[col][j] && j < boardRow) {
+  while (board[col][j] && j < BOARD_NUM_ROW) {
     j++;
   }
-  if (j < boardRow) {
+  if (j < BOARD_NUM_ROW) {
     board[col][j] = player;
   }
 }
 
 function removePiece(col) {
-  let j = boardRow - 1;
+  let j = BOARD_NUM_ROW - 1;
   // Find the j index to place the piece vertically
   while (!board[col][j] && j >= 0) {
     j--;
@@ -188,8 +188,8 @@ function removePiece(col) {
 }
 
 function isFullBoard() {
-  for (let i = 0; i < boardCol; i++) {
-    for (let j = 0; j < boardRow; j++) {
+  for (let i = 0; i < BOARD_NUM_COL; i++) {
+    for (let j = 0; j < BOARD_NUM_ROW; j++) {
       if (!board[i][j]) return false;
     }
   }
@@ -197,8 +197,8 @@ function isFullBoard() {
 }
 
 function isEmptyBoard() {
-  for (let i = 0; i < boardCol; i++) {
-    for (let j = 0; j < boardRow; j++) {
+  for (let i = 0; i < BOARD_NUM_COL; i++) {
+    for (let j = 0; j < BOARD_NUM_ROW; j++) {
       if (board[i][j]) return false;
     }
   }
@@ -213,8 +213,8 @@ function checkWinner() {
   let winner = null;
 
   // Check horizontally
-  for (let j = 0; j < boardRow; j++) {
-    for (let i = 0; i < boardCol - 3; i++) {
+  for (let j = 0; j < BOARD_NUM_ROW; j++) {
+    for (let i = 0; i < BOARD_NUM_COL - 3; i++) {
       if (equals(board[i][j], board[i + 1][j], board[i + 2][j], board[i + 3][j])) {
         winner = board[i][j];
       }
@@ -222,8 +222,8 @@ function checkWinner() {
   }
 
   // Check vertically
-  for (let i = 0; i < boardCol; i++) {
-    for (let j = 0; j < boardRow - 3; j++) {
+  for (let i = 0; i < BOARD_NUM_COL; i++) {
+    for (let j = 0; j < BOARD_NUM_ROW - 3; j++) {
       if (equals(board[i][j], board[i][j + 1], board[i][j + 2], board[i][j + 3])) {
         winner = board[i][j];
       }
@@ -231,8 +231,8 @@ function checkWinner() {
   }
 
   // Check diagonales (left bottom - right top)
-  for (let j = 0; j < boardRow - 3; j++) {
-    for (let i = 0; i < boardCol - 3; i++) {
+  for (let j = 0; j < BOARD_NUM_ROW - 3; j++) {
+    for (let i = 0; i < BOARD_NUM_COL - 3; i++) {
       if (
         equals(board[i][j], board[i + 1][j + 1], board[i + 2][j + 2], board[i + 3][j + 3])
       ) {
@@ -242,8 +242,8 @@ function checkWinner() {
   }
 
   // Check diagonales (left top - right bottom)
-  for (let j = 3; j < boardRow; j++) {
-    for (let i = 0; i < boardCol - 3; i++) {
+  for (let j = 3; j < BOARD_NUM_ROW; j++) {
+    for (let i = 0; i < BOARD_NUM_COL - 3; i++) {
       if (
         equals(board[i][j], board[i + 1][j - 1], board[i + 2][j - 2], board[i + 3][j - 3])
       ) {
