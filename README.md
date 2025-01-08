@@ -6,4 +6,4 @@ Try to beat the artificial intelligence in the famous game of connect four. This
 
 ## Demo
 
-https://mxjoly.github.io/connect-four/
+https://cryptolympix.github.io/connect-four/
